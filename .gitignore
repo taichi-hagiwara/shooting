@@ -3,9 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
-# 仮想環境フォルダ（もし venv という名前なら）
+# 仮想環境フォルダ
 .venv/
+env/
 
-
-# VS Codeの設定ファイル（個人設定は共有しない方が良い場合が多い）
+# VS Codeの設定ファイル
 .vscode/
