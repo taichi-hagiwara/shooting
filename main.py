@@ -76,7 +76,7 @@ while running:
         direction_p = player.move_player(1, 0, grid)  # 右方向
 
   # 更新処理: 弾の状態を更新
-  bullet.recharge_bullet()  # プレイヤーの弾補充処理
+  Bullet.recharge_bullet()  # プレイヤーの弾補充処理
   for bullet in bullets[:]:
     bullet.update(grid)
     if not bullet.active:

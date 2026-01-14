@@ -16,9 +16,9 @@ class Grid:
 
   def draw(self, screen):
     # 辞書から各タイル情報を描画
-    for pos, color in self.grid.items():
+    for (x, y), color in self.grid.items():
       pygame.draw.rect(
-          screen, color, (pos.x * CELL_SIZE, pos.y *
+          screen, color, (x * CELL_SIZE, y *
                           CELL_SIZE, CELL_SIZE, CELL_SIZE)
       )
 
