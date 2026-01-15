@@ -1,6 +1,6 @@
 import pygame
 from pygame.math import Vector2
-from constants import WIDTH, HEIGHT, GRID_SIZE, CELL_SIZE, FPS
+from constants import WIDTH, HEIGHT, GRID_SIZE, CELL_SIZE, FPS, SPAWN_EVENT
 from grid import Grid
 from bullet import Bullet
 from enemy import Enemy
@@ -11,6 +11,7 @@ import random
 pygame.init()
 screen = pygame.display.set_mode((WIDTH, HEIGHT))
 clock = pygame.time.Clock()
+pygame.time.set_timer(SPAWN_EVENT, 1000)  # 敵スポーンイベントを毎秒1回発生
 
 # グリッドと弾のリスト
 grid = Grid()  # グリッドクラスのインスタンス
@@ -60,7 +61,9 @@ while running:
         direction_b = Vector2(1, 0)  # 右方向
 
       if direction_b and Bullet.can_fire():  # 弾が発射可能か判定
-        bullet = Bullet(player.pos, direction_b, speed=5)  # 新しい弾を生成
+        # 新しい弾を生成
+        bullet = Bullet(player.pos * CELL_SIZE + Vector2(CELL_SIZE //
+                        2, CELL_SIZE // 2), direction_b, speed=5)
         bullets.append(bullet)  # 弾をリストに追加
         Bullet.decrease_bullet_count()  # 残弾数を1減らす
       elif not Bullet.can_fire():
@@ -86,10 +89,14 @@ while running:
   grid.draw(screen)  # グリッドの描画
   for bullet in bullets:
     bullet.draw(screen)
+  player.draw(screen)  # プレイヤーの描画
 
   # 敵を定期的に生成
-  if len(enemies) < 5:  # 同時に存在できる敵の数を制限
-    spawn_enemy()
+  # イベントタイマーを使った敵の自動生成
+  for event in pygame.event.get():
+    if event.type == SPAWN_EVENT:
+      if len(enemies) < 5:  # 敵の上限判定
+        spawn_enemy()
 
   # 敵の更新と描画
   for enemy in enemies[:]:
