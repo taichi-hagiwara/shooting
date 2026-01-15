@@ -19,6 +19,13 @@ player = Player(Vector2(GRID_SIZE // 2, GRID_SIZE // 2))  # プレイヤーを�
 bullets = []  # 弾（Bullet）オブジェクトを管理するリスト
 enemies = []  # 敵オブジェクトを管理するリスト
 
+def reset_game():
+  global bullets, enemies, player, grid, game_over
+  bullets = []
+  enemies = []
+  player = Player(Vector2(GRID_SIZE // 2, GRID_SIZE // 2))
+  grid = Grid()
+  game_over = False
 
 def spawn_enemy():
   # ランダムに出現位置を決定
@@ -40,11 +47,28 @@ def spawn_enemy():
 def display_game_over():
   screen.fill((0, 0, 0))  # 背景を黒にする
   font = pygame.font.Font(None, 72)
+
   text = font.render("Game Over", True, (255, 0, 0))
   screen.blit(text, (WIDTH // 2 - text.get_width() //
               2, HEIGHT // 2 - text.get_height() // 2))
+
+  subtext = font.render("Press R to Restart", True, (255, 255, 255))
+  screen.blit(subtext, (WIDTH // 2 - subtext.get_width() //
+              2, HEIGHT // 2 - subtext.get_height() // 2 + 50))
+
   pygame.display.flip()
   pygame.time.delay(3000)  # 3秒間待つ
+
+  # リセット待機ループ
+  while True:
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        pygame.quit()
+        return
+      if event.type == pygame.KEYDOWN:
+        if event.key == pygame.K_r:
+          reset_game()
+          return
 
 # ゲームループ
 running = True
