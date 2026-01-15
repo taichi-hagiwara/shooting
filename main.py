@@ -64,91 +64,95 @@ def display_game_over():
     for event in pygame.event.get():
       if event.type == pygame.QUIT:
         pygame.quit()
-        return
+        exit()
       if event.type == pygame.KEYDOWN:
         if event.key == pygame.K_r:
-          reset_game()
-          return
+          return "restart"
 
-# ゲームループ
-running = True
-while running:
-  screen.fill((0, 0, 0))  # 背景を塗りつぶす
+while True:
+  reset_game()
+  # ゲームループ
+  running = True
+  while running:
+    screen.fill((0, 0, 0))  # 背景を塗りつぶす
 
-  # イベント処理（入力判定）
-  for event in pygame.event.get():
-    if event.type == pygame.QUIT:
-      running = False
+    # イベント処理（入力判定）
+    for event in pygame.event.get():
+      if event.type == pygame.QUIT:
+        running = False
 
-    # 矢印キーで弾を発射
-    if event.type == pygame.KEYDOWN:
-      direction_b = None
-      direction_p = None
-      if event.key == pygame.K_UP:
-        direction_b = Vector2(0, -1)  # 上方向
-      elif event.key == pygame.K_DOWN:
-        direction_b = Vector2(0, 1)  # 下方向
-      elif event.key == pygame.K_LEFT:
-        direction_b = Vector2(-1, 0)  # 左方向
-      elif event.key == pygame.K_RIGHT:
-        direction_b = Vector2(1, 0)  # 右方向
+      # 矢印キーで弾を発射
+      if event.type == pygame.KEYDOWN:
+        direction_b = None
+        direction_p = None
+        if event.key == pygame.K_UP:
+          direction_b = Vector2(0, -1)  # 上方向
+        elif event.key == pygame.K_DOWN:
+          direction_b = Vector2(0, 1)  # 下方向
+        elif event.key == pygame.K_LEFT:
+          direction_b = Vector2(-1, 0)  # 左方向
+        elif event.key == pygame.K_RIGHT:
+          direction_b = Vector2(1, 0)  # 右方向
 
-      if direction_b and Bullet.can_fire():  # 弾が発射可能か判定
-        # 新しい弾を生成
-        bullet = Bullet(player.pos * CELL_SIZE + Vector2(CELL_SIZE //
-                        2, CELL_SIZE // 2), direction_b, speed=5)
-        bullets.append(bullet)  # 弾をリストに追加
-        Bullet.decrease_bullet_count()  # 残弾数を1減らす
-      elif not Bullet.can_fire():
-        print("残弾がありません！")
-    # WASDでプレイヤー移動
-      if event.key == pygame.K_w:
-        player.move_player(0, -1, grid)  # 上方向
-      elif event.key == pygame.K_s:
-        player.move_player(0, 1, grid)  # 下方向
-      elif event.key == pygame.K_a:
-        player.move_player(-1, 0, grid)  # 左方向
-      elif event.key == pygame.K_d:
-        player.move_player(1, 0, grid)  # 右方向
-    # 敵スポーンイベントの処理
-    if event.type == SPAWN_EVENT:
-      if len(enemies) < 5:  # 敵の上限判定
-        spawn_enemy()
+        if direction_b and Bullet.can_fire():  # 弾が発射可能か判定
+          # 新しい弾を生成
+          bullet = Bullet(player.pos * CELL_SIZE + Vector2(CELL_SIZE //
+                          2, CELL_SIZE // 2), direction_b, speed=5)
+          bullets.append(bullet)  # 弾をリストに追加
+          Bullet.decrease_bullet_count()  # 残弾数を1減らす
+        elif not Bullet.can_fire():
+          print("残弾がありません！")
+      # WASDでプレイヤー移動
+        if event.key == pygame.K_w:
+          player.move_player(0, -1, grid)  # 上方向
+        elif event.key == pygame.K_s:
+          player.move_player(0, 1, grid)  # 下方向
+        elif event.key == pygame.K_a:
+          player.move_player(-1, 0, grid)  # 左方向
+        elif event.key == pygame.K_d:
+          player.move_player(1, 0, grid)  # 右方向
+      # 敵スポーンイベントの処理
+      if event.type == SPAWN_EVENT:
+        if len(enemies) < 5:  # 敵の上限判定
+          spawn_enemy()
 
-  # 更新処理: 弾の状態を更新
-  Bullet.recharge_bullet()  # プレイヤーの弾補充処理
-  for bullet in bullets[:]:
-    bullet.update(grid)
-    if not bullet.active:
-      bullets.remove(bullet)
+    # 更新処理: 弾の状態を更新
+    Bullet.recharge_bullet()  # プレイヤーの弾補充処理
+    for bullet in bullets[:]:
+      bullet.update(grid)
+      if not bullet.active:
+        bullets.remove(bullet)
 
-  # 描画処理: グリッドと弾
-  grid.draw(screen)  # グリッドの描画
-  for bullet in bullets:
-    bullet.draw(screen)
-  player.draw(screen)  # プレイヤーの描画
+    # 描画処理: グリッドと弾
+    grid.draw(screen)  # グリッドの描画
+    for bullet in bullets:
+      bullet.draw(screen)
+    player.draw(screen)  # プレイヤーの描画
 
-  # 敵を定期的に生成
-  # イベントタイマーを使った敵の自動生成
+    # 敵を定期的に生成
+    # イベントタイマーを使った敵の自動生成
 
-  # 敵の更新と描画
-  for enemy in enemies[:]:
-    enemy.update(grid)
-    enemy_grid_pos = Vector2(int(enemy.pos.x // CELL_SIZE),
-                             int(enemy.pos.y // CELL_SIZE))
-    player_grid_pos = Vector2(int(player.pos.x), int(player.pos.y))
-    if enemy_grid_pos == player_grid_pos:
-      game_over = True  # ゲームオーバーフラグ
-      running = False  # ゲームループ終了
-      break  # ループを抜ける
-    if not enemy.active:
-      enemies.remove(enemy)  # 非アクティブな敵を削除
-    enemy.draw(screen)
+    # 敵の更新と描画
+    for enemy in enemies[:]:
+      enemy.update(grid)
+      enemy_grid_pos = Vector2(int(enemy.pos.x // CELL_SIZE),
+                               int(enemy.pos.y // CELL_SIZE))
+      player_grid_pos = Vector2(int(player.pos.x), int(player.pos.y))
+      if enemy_grid_pos == player_grid_pos:
+        game_over = True  # ゲームオーバーフラグ
+        running = False  # ゲームループ終了
+        break  # ループを抜ける
+      if not enemy.active:
+        enemies.remove(enemy)  # 非アクティブな敵を削除
+      enemy.draw(screen)
 
-  # 画面更新
-  pygame.display.flip()
-  clock.tick(FPS)
+    # 画面更新
+    pygame.display.flip()
+    clock.tick(FPS)
 
-if game_over:
-  display_game_over()
-pygame.quit()
+  if game_over:
+    display_game_over()
+    if display_game_over() == "restart":
+      continue
+  else:
+    break
