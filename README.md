@@ -3,6 +3,7 @@
 
 ## 説明
 Python と Pygame を使って作成したグリッドベースのシューティングゲームです。次々と湧き出る敵を避けながら生き延びることを目標としたゲームで、弾を撃って黒いタイルを白にし、敵やタイルの変化に対処します。
+
 <img src = /img/img_demo1.png width = "400px">
 <img src = /img/img_demo2.png width = "400px">
 <img src = /img/img_demo3.png width = "400px">
